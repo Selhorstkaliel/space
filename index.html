@@ -82,7 +82,25 @@
       from { opacity: 0; }
       to { opacity: 1; }
     }
-  </style>
+
+    #lifeFlash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 0, 0, 0.3);
+  pointer-events: none;
+  z-index: 50;
+  display: none;
+  animation: flashLife 0.3s ease;
+}
+
+@keyframes flashLife {
+  0% { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+</style>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -106,6 +124,9 @@
     <strong>Ranking:</strong>
     <ol id="rankingList"></ol>
   </div>
+ 
+  <div id="lifeFlash"></div>
+
 <script>
 const shootSound = new Audio('https://www.myinstants.com/media/sounds/laser1.mp3');
 const explosionSound = new Audio('https://www.myinstants.com/media/sounds/explosion.mp3');
@@ -327,6 +348,7 @@ function checkPowerUpPickup() {
 function checkPlayerHit() {
   enemyBullets.forEach((b, i) => {
     if (b.x < player.x + player.width && b.x + b.width > player.x && b.y < player.y + player.height && b.y + b.height > player.y) {
+      triggerLifeFlash();
       lives--;
       livesEl.textContent = lives;
       enemyBullets.splice(i, 1);
@@ -486,6 +508,18 @@ function startGame() {
   loop();
 }
 
+function triggerLifeFlash() {
+  const flash = document.getElementById('lifeFlash');
+  flash.style.display = 'block';
+  flash.style.animation = 'none';
+  void flash.offsetWidth; // força reflow para reiniciar animação
+  flash.style.animation = 'flashLife 0.3s ease';
+  setTimeout(() => {
+    flash.style.display = 'none';
+  }, 300);
+}
+
+
 document.getElementById('startButton').addEventListener('click', startGame);
 document.getElementById('pauseScreen').style.display = 'none';
 
@@ -495,4 +529,3 @@ loop();
 </script>
 </body>
 </html>
-
